@@ -29,26 +29,26 @@ jobs:
           wget https://github.com/CyberChainXyz/xMiner/releases/download/${{ steps.version.outputs.version }}/xMiner-Linux-X64-${{ steps.version.outputs.version }}.tar.gz
           mkdir -p temp
           tar xzf xMiner-Linux-X64-${{ steps.version.outputs.version }}.tar.gz -C temp
-          mv temp/xMiner-${{ steps.version.outputs.version }}/xMiner ./
+          mv temp/xMiner-${{ steps.version.outputs.version }}/xMiner ./xMiner-binary
           rm -rf temp xMiner-Linux-X64-${{ steps.version.outputs.version }}.tar.gz
 
       - name: Prepare HiveOS package
         run: |
-          mkdir -p xMiner-${{ steps.version.outputs.version }}
-          cp xMiner xMiner-${{ steps.version.outputs.version }}/
-          cp h-manifest.conf xMiner-${{ steps.version.outputs.version }}/
-          cp h-config.sh xMiner-${{ steps.version.outputs.version }}/
-          cp h-run.sh xMiner-${{ steps.version.outputs.version }}/
-          cp h-stats.sh xMiner-${{ steps.version.outputs.version }}/
-          chmod +x xMiner-${{ steps.version.outputs.version }}/*.sh
-          chmod +x xMiner-${{ steps.version.outputs.version }}/xMiner
+          mkdir -p xMiner
+          cp xMiner-binary xMiner/xMiner
+          cp h-manifest.conf xMiner/
+          cp h-config.sh xMiner/
+          cp h-run.sh xMiner/
+          cp h-stats.sh xMiner/
+          chmod +x xMiner/*.sh
+          chmod +x xMiner/xMiner
 
       - name: Archive Release
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: tar
           filename: xMiner-${{ steps.version.outputs.version }}.tar.gz
-          path: xMiner-${{ steps.version.outputs.version }}
+          path: xMiner
 
       - name: Release
         uses: softprops/action-gh-release@v2
