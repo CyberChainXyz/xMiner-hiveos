@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+. /hive/miners/custom/xMiner/h-manifest.conf
+[[ -z $CUSTOM_LOG_BASENAME ]] && CUSTOM_LOG_BASENAME="/var/log/miner/xMiner/log"
+
 
 #2024/12/30 19:24:47 Pool connected: FakePool
 #2024/12/30 19:24:51 Device [1] Intel(R) Iris(R) Xe Graphics [0x1234]: Initialized (maxThreads: 3840, workSize: 8)
