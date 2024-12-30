@@ -1,0 +1,56 @@
+name: Release HiveOS Package
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build_release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get xMiner version
+        id: version
+        run: |
+          VERSION=$(grep CUSTOM_VERSION h-manifest.conf | cut -d= -f2 | tr -d '"' | tr -d ' ')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download xMiner
+        run: |
+          wget https://github.com/CyberChainXyz/xMiner/releases/download/${{ steps.version.outputs.version }}/xMiner-Linux-X64-${{ steps.version.outputs.version }}.tar.gz
+          mkdir -p temp
+          tar xzf xMiner-Linux-X64-${{ steps.version.outputs.version }}.tar.gz -C temp
+          mv temp/xMiner-${{ steps.version.outputs.version }}/xMiner ./
+          rm -rf temp xMiner-Linux-X64-${{ steps.version.outputs.version }}.tar.gz
+
+      - name: Prepare HiveOS package
+        run: |
+          mkdir -p xMiner-${{ steps.version.outputs.version }}
+          cp xMiner xMiner-${{ steps.version.outputs.version }}/
+          cp h-manifest.conf xMiner-${{ steps.version.outputs.version }}/
+          cp h-config.sh xMiner-${{ steps.version.outputs.version }}/
+          cp h-run.sh xMiner-${{ steps.version.outputs.version }}/
+          cp h-stats.sh xMiner-${{ steps.version.outputs.version }}/
+          chmod +x xMiner-${{ steps.version.outputs.version }}/*.sh
+          chmod +x xMiner-${{ steps.version.outputs.version }}/xMiner
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@0.7.6
+        with:
+          type: tar
+          filename: xMiner-${{ steps.version.outputs.version }}.tar.gz
+          path: xMiner-${{ steps.version.outputs.version }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: xMiner-${{ steps.version.outputs.version }}.tar.gz 
