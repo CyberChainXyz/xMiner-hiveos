@@ -70,5 +70,5 @@ done
 [[ -z $stats ]] && stats="null"
 
 # Output stats
-echo stats: $stats
-echo khs:   $khs
+# echo stats: $stats
+# echo khs:   $khs
